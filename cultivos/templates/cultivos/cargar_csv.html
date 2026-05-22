@@ -1,0 +1,16 @@
+{% extends "cultivos/base.html" %}
+{% block title %}Cargar CSV{% endblock %}
+
+{% block content %}
+<h1>Cargar archivo CSV</h1>
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn primary">Guardar</button>
+</form>
+
+<p>
+    <a href="{% url 'inicio' %}">Volver al inicio</a>
+</p>
+{% endblock %}

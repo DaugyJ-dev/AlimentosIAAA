@@ -1,0 +1,44 @@
+{% extends "cultivos/base.html" %}
+{% block title %}Historial de consultas{% endblock %}
+
+{% block content %}
+<h1>📋 Historial de predicciones</h1>
+<p style="color:#666;">Últimas 50 consultas realizadas.</p>
+
+{% if not registros %}
+    <p>No hay consultas registradas todavía.</p>
+{% else %}
+<table style="width:100%;border-collapse:collapse;margin-top:1rem;font-size:0.9rem;">
+    <thead style="background:#01696f;color:white;">
+        <tr>
+            <th style="padding:0.6rem;">Municipio</th>
+            <th>Departamento</th>
+            <th>Año</th>
+            <th>Hectáreas</th>
+            <th>Cultivo recomendado</th>
+            <th>Rendimiento</th>
+            <th>Nivel</th>
+            <th>Producción est.</th>
+            <th>Fecha</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in registros %}
+        <tr style="border-bottom:1px solid #ddd;">
+            <td style="padding:0.5rem;">{{ r.municipio }}</td>
+            <td>{{ r.departamento }}</td>
+            <td>{{ r.anio }}</td>
+            <td>{{ r.hectareas }}</td>
+            <td><strong>{{ r.cultivo_principal }}</strong></td>
+            <td>{{ r.rendimiento_principal }} t/ha</td>
+            <td>{{ r.nivel_principal }}</td>
+            <td>{{ r.produccion_principal }} t</td>
+            <td style="color:#888;font-size:0.8rem;">{{ r.fecha|date:"d/m/Y H:i" }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+<p style="margin-top:1.5rem;"><a href="{% url 'inicio' %}">← Volver</a></p>
+{% endblock %}

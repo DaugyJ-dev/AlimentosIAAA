@@ -1,0 +1,57 @@
+{% extends "cultivos/base.html" %}
+{% block title %}Explorar datos{% endblock %}
+
+{% block content %}
+<h1>Explorar cultivos por municipio</h1>
+
+<form method="GET" style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem;">
+    <div>
+        <label><strong>Departamento</strong></label><br>
+        <select name="departamento" class="form-select" onchange="this.form.submit()" style="min-width:200px;">
+            <option value="">— Selecciona —</option>
+            {% for d in departamentos %}
+                <option value="{{ d }}" {% if d == departamento_sel %}selected{% endif %}>
+                    {{ d|title }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    {% if municipios %}
+    <div>
+        <label><strong>Municipio</strong></label><br>
+        <select name="municipio" class="form-select" onchange="this.form.submit()" style="min-width:200px;">
+            <option value="">— Selecciona —</option>
+            {% for m in municipios %}
+                <option value="{{ m }}" {% if m == municipio_sel %}selected{% endif %}>
+                    {{ m|title }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+    {% endif %}
+</form>
+
+{% if cultivos_data %}
+<h2>Top cultivos en {{ municipio_sel|title }}, {{ departamento_sel|title }}</h2>
+
+<table style="width:100%;border-collapse:collapse;margin-top:1rem;">
+    <thead>
+        <tr style="background:#f2ede3;">
+            <th style="padding:0.75rem;text-align:left;border-bottom:2px solid #d9cfbf;">Cultivo</th>
+            <th style="padding:0.75rem;text-align:right;border-bottom:2px solid #d9cfbf;">Rendimiento (t/ha)</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for c in cultivos_data %}
+        <tr style="border-bottom:1px solid #e8e4da;">
+            <td style="padding:0.65rem 0.75rem;">{{ c.CULTIVO|title }}</td>
+            <td style="padding:0.65rem 0.75rem;text-align:right;">{{ c.rendimiento }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+<p style="margin-top:2rem;"><a href="{% url 'inicio' %}">Volver</a></p>
+{% endblock %}

@@ -1,0 +1,141 @@
+{% extends "cultivos/base.html" %}
+{% load static %}
+{% block title %}Predicción IA{% endblock %}
+
+{% block content %}
+<div class="prediccion-page">
+  <div class="prediccion-header">
+    <div class="logo-pill">IA</div>
+    <div>
+      <h1>¿Qué debo sembrar?</h1>
+      <p class="lead">
+        Ingresa tus datos y el sistema recomendará el cultivo más rentable para tu zona.
+      </p>
+    </div>
+  </div>
+
+  <form method="POST" class="form-card" aria-labelledby="form-title">
+    {% csrf_token %}
+
+    <div class="form-grid">
+      <div class="field">
+        <label for="id_departamento"><strong>Departamento</strong></label>
+        {{ form.departamento }}
+        {% if form.departamento.errors %}
+          <div class="error-text">{{ form.departamento.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field">
+        <label for="id_municipio"><strong>Municipio</strong></label>
+        {{ form.municipio }}
+        {% if form.municipio.errors %}
+          <div class="error-text">{{ form.municipio.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field">
+        <label for="{{ form.periodo.id_for_label }}"><strong>Año en que planea sembrar</strong></label>
+        <small class="help-text">
+          Datos históricos disponibles: 2007–2018. Los años posteriores se estiman con base en la tendencia.
+        </small>
+        {{ form.periodo }}
+        {% if form.periodo.errors %}
+          <div class="error-text">{{ form.periodo.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field">
+        <label for="id_hectareas"><strong>Hectáreas disponibles</strong></label>
+        <small class="help-text">
+          Escriba la cantidad de tierra que desea sembrar.
+        </small>
+        {{ form.hectareas }}
+        {% if form.hectareas.errors %}
+          <div class="error-text">{{ form.hectareas.errors.0 }}</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="submit" class="btn btn-primary">Generar recomendación</button>
+      <a href="{% url 'inicio' %}" class="btn btn-secondary" role="button">Volver al inicio</a>
+    </div>
+  </form>
+
+  {% if resultado %}
+  <section class="results" aria-live="polite">
+    <div class="result-card">
+      <div class="result-title">
+        <h2>Recomendación principal</h2>
+      </div>
+      <div class="result-body">
+        <p>{{ resultado.mensaje }}</p>
+        <p><strong>Cultivo:</strong> {{ resultado.principal.cultivo }}</p>
+        <p><strong>Rendimiento estimado:</strong> {{ resultado.principal.rendimiento }} t/ha — nivel <strong>{{ resultado.principal.nivel }}</strong></p>
+        <p><em>{{ resultado.principal.explicacion }}</em></p>
+        <p><strong>Producción total estimada:</strong> {{ resultado.principal.produccion_estimada }} toneladas en {{ resultado.hectareas }} hectáreas.</p>
+      </div>
+    </div>
+
+    {% if resultado.alternativo %}
+    <div class="result-card alt-card">
+      <div class="result-title">
+        <h2>Alternativa recomendada</h2>
+      </div>
+      <div class="result-body">
+        <p><strong>Cultivo:</strong> {{ resultado.alternativo.cultivo }}</p>
+        <p><strong>Rendimiento estimado:</strong> {{ resultado.alternativo.rendimiento }} t/ha — nivel <strong>{{ resultado.alternativo.nivel }}</strong></p>
+        <p><em>{{ resultado.alternativo.explicacion }}</em></p>
+        <p><strong>Producción total estimada:</strong> {{ resultado.alternativo.produccion_estimada }} toneladas.</p>
+      </div>
+    </div>
+    {% endif %}
+  </section>
+  {% endif %}
+
+  <p>
+    <a class="back-link" href="{% url 'inicio' %}">Volver al inicio</a>
+  </p>
+</div>
+
+<script>
+const deptoMun = {{ depto_mun_json|safe }};
+const selectDep = document.getElementById('id_departamento');
+const selectMun = document.getElementById('id_municipio');
+
+function capitalizarTexto(texto) {
+  return texto
+    .toLowerCase()
+    .replace(/\b\w/g, letra => letra.toUpperCase());
+}
+
+function actualizarMunicipios() {
+  if (!selectDep || !selectMun) return;
+
+  const deptoSeleccionado = selectDep.value;
+  const municipios = deptoMun[deptoSeleccionado] || [];
+
+  selectMun.innerHTML = '<option value="">— Selecciona municipio —</option>';
+
+  municipios.forEach(mun => {
+    const opt = document.createElement('option');
+    opt.value = mun;
+    opt.textContent = capitalizarTexto(mun);
+    selectMun.appendChild(opt);
+  });
+}
+
+if (selectDep) {
+  selectDep.addEventListener('change', actualizarMunicipios);
+
+  if (selectDep.value) {
+    actualizarMunicipios();
+    const munActual = "{{ request.POST.municipio|default:'' }}".toUpperCase();
+    if (munActual) {
+      selectMun.value = munActual;
+    }
+  }
+}
+</script>
+{% endblock %}

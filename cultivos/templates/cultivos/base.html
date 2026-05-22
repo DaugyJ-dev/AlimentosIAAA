@@ -1,0 +1,79 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}La Jinca{% endblock %}</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+
+<body>
+
+<nav class="navbar">
+
+  <div style="
+    display:flex;
+    align-items:center;
+    gap:10px;
+  ">
+
+    <img
+      src="https://cdn-icons-png.flaticon.com/512/628/628324.png"
+      alt="Logo"
+      style="
+        width:35px;
+        height:35px;
+        object-fit:cover;
+      "
+    >
+
+    <span class="brand">
+      La Jinca
+    </span>
+
+  </div>
+
+  <div class="nav-links">
+
+    <a href="{% url 'inicio' %}">
+      Inicio
+    </a>
+
+    <a href="{% url 'resultados' %}">
+      Resultados
+    </a>
+
+  </div>
+
+</nav>
+
+<div class="container">
+
+  {% if messages %}
+
+    <ul class="messages">
+
+      {% for msg in messages %}
+
+        <li class="{{ msg.tags }}">
+          {{ msg }}
+        </li>
+
+      {% endfor %}
+
+    </ul>
+
+  {% endif %}
+
+  {% block content %}{% endblock %}
+
+</div>
+
+</body>
+</html>

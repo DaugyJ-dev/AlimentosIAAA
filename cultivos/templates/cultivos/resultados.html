@@ -1,0 +1,47 @@
+{% extends "cultivos/base.html" %}
+{% block title %}Resultados{% endblock %}
+
+{% block content %}
+<h1>Historial de resultados</h1>
+
+{% if preds %}
+    <table>
+        <thead>
+            <tr>
+                <th>Cultivo principal</th>
+                <th>Departamento</th>
+                <th>Municipio</th>
+                <th>Año</th>
+                <th>Hectáreas</th>
+                <th>Rendimiento</th>
+                <th>Nivel</th>
+                <th>Producción</th>
+                <th>Alternativa</th>
+                <th>Fecha</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in preds %}
+                <tr>
+                    <td>{{ p.cultivo_principal }}</td>
+                    <td>{{ p.departamento }}</td>
+                    <td>{{ p.municipio }}</td>
+                    <td>{{ p.anio }}</td>
+                    <td>{{ p.hectareas }}</td>
+                    <td>{{ p.rendimiento_principal }} t/ha</td>
+                    <td>{{ p.nivel_principal }}</td>
+                    <td>{{ p.produccion_principal }} toneladas</td>
+                    <td>{{ p.cultivo_alternativo|default:"Sin alternativa" }}</td>
+                    <td>{{ p.fecha }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No hay resultados guardados.</p>
+{% endif %}
+
+<p>
+    <a href="{% url 'inicio' %}">Volver al inicio</a>
+</p>
+{% endblock %}
